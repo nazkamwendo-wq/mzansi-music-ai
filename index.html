@@ -2,318 +2,388 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Mzansi Music AI — Make your sound</title>
+  <meta name="description" content="Create original Amapiano, Gqom, Maskandi, Gospel and more. Offline Beat Maker built for South African phones.">
+  <meta name="theme-color" content="#09090b">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
-    body { font-family: 'Inter', sans-serif; }
+    body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
     .font-display { font-family: 'Space Grotesk', sans-serif; }
     .gradient-text { background: linear-gradient(135deg, #f59e0b, #eab308, #84cc16); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.3); }
+    .card-hover { transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    .card-hover:hover { transform: translateY(-3px); }
     .pulse-glow { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-    .beat-pad { transition: all 0.1s; }
-    .beat-pad.active { transform: scale(0.95); filter: brightness(1.3); }
-    .wave { animation: wave 1.5s ease-in-out infinite; }
-    @keyframes wave { 0%, 100% { height: 20%; } 50% { height: 100%; } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .beat-pad { transition: transform 0.08s, background 0.1s; touch-action: manipulation; }
+    .beat-pad:active { transform: scale(0.92); }
+    .step-active { box-shadow: 0 0 0 2px #f59e0b; }
+    .wave { animation: wave 1.2s ease-in-out infinite; }
+    @keyframes wave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+    .bottom-nav { padding-bottom: env(safe-area-inset-bottom); }
   </style>
 </head>
 <body class="bg-zinc-950 text-zinc-100 min-h-screen">
-  <!-- Nav -->
-  <nav class="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur-xl sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-lime-500 flex items-center justify-center">
+
+  <!-- Top bar -->
+  <header class="border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur-xl sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-lime-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
           <i class="fa-solid fa-music text-black text-sm"></i>
         </div>
-        <span class="font-display font-bold text-lg">Mzansi Music</span>
+        <span class="font-display font-bold text-base tracking-tight">Mzansi Music</span>
       </div>
-      <div class="flex items-center gap-6 text-sm">
-        <button onclick="showPage('home')" class="hover:text-amber-400 transition">Home</button>
-        <button onclick="showPage('create')" class="hover:text-amber-400 transition">Create</button>
-        <button onclick="showPage('beatmaker')" class="hover:text-amber-400 transition">Beat Maker</button>
-        <button onclick="showPage('songs')" class="hover:text-amber-400 transition">My Songs</button>
+      <div class="text-xs text-zinc-400 flex items-center gap-1.5">
+        <span class="w-1.5 h-1.5 rounded-full bg-lime-500"></span>
+        <span id="credits">5 credits</span>
       </div>
     </div>
-  </nav>
+  </header>
 
-  <!-- HOME -->
-  <div id="page-home" class="page">
-    <section class="max-w-6xl mx-auto px-4 pt-20 pb-16 text-center">
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs mb-6">
-        <span class="w-2 h-2 rounded-full bg-lime-500 pulse-glow"></span>
-        Free daily credits · Offline Beat Maker
-      </div>
-      <h1 class="font-display text-5xl md:text-7xl font-bold leading-tight mb-6">
-        Make your sound.<br><span class="gradient-text">Free to start.</span>
-      </h1>
-      <p class="text-zinc-400 text-lg max-w-2xl mx-auto mb-10">
-        Create original Amapiano, Gqom, Gospel, Maskandi and more from a simple description — built for South African phones and data budgets.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <button onclick="showPage('create')" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-amber-500 to-lime-500 text-black font-semibold text-lg hover:opacity-90 transition">
-          Start free
-        </button>
-        <button onclick="showPage('beatmaker')" class="px-8 py-4 rounded-2xl border border-zinc-700 hover:border-amber-500 transition">
-          Try the Beat Maker
-        </button>
-      </div>
-    </section>
+  <!-- Pages -->
+  <main class="pb-24">
 
-    <section class="max-w-6xl mx-auto px-4 grid md:grid-cols-3 gap-6 pb-16">
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 card-hover">
-        <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4">
-          <i class="fa-solid fa-clock text-amber-400 text-xl"></i>
+    <!-- HOME -->
+    <div id="page-home" class="page">
+      <section class="max-w-6xl mx-auto px-4 pt-10 pb-8 text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs mb-5">
+          <span class="w-1.5 h-1.5 rounded-full bg-lime-500 pulse-glow"></span>
+          Offline Beat Maker · Your music, your rights
         </div>
-        <h3 class="font-semibold text-lg mb-2">Full songs, your length</h3>
-        <p class="text-zinc-400 text-sm">From a 30-second preview to a full song of 4 to 6 minutes — extended songs never run past 6:30.</p>
-      </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 card-hover">
-        <div class="w-12 h-12 rounded-xl bg-lime-500/10 flex items-center justify-center mb-4">
-          <i class="fa-solid fa-copyright text-lime-400 text-xl"></i>
+        <h1 class="font-display text-4xl sm:text-6xl font-bold leading-[1.05] mb-4">
+          Make your sound.<br><span class="gradient-text">Free to start.</span>
+        </h1>
+        <p class="text-zinc-400 text-base sm:text-lg max-w-xl mx-auto mb-8">
+          Original Amapiano, Gqom, Maskandi, Gospel and more — from a simple description. Built for South African phones.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+          <button onclick="showPage('create')" class="px-7 py-3.5 rounded-2xl bg-gradient-to-r from-amber-500 to-lime-500 text-black font-semibold hover:opacity-90 active:scale-[0.98] transition">
+            Start free
+          </button>
+          <button onclick="showPage('beatmaker')" class="px-7 py-3.5 rounded-2xl border border-zinc-700 hover:border-amber-500 active:scale-[0.98] transition">
+            Try Beat Maker
+          </button>
         </div>
-        <h3 class="font-semibold text-lg mb-2">Your music, your rights</h3>
-        <p class="text-zinc-400 text-sm">Every song you make is yours. Download the MP3 and use it anywhere, even commercially.</p>
-      </div>
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 card-hover">
-        <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-4">
-          <i class="fa-solid fa-mobile-screen text-emerald-400 text-xl"></i>
-        </div>
-        <h3 class="font-semibold text-lg mb-2">Built for SA phones</h3>
-        <p class="text-zinc-400 text-sm">Free daily credits, a data-light Beat Maker that works offline, and genres from Amapiano to Maskandi.</p>
-      </div>
-    </section>
+      </section>
 
-    <section class="max-w-6xl mx-auto px-4 pb-20">
-      <h2 class="font-display text-3xl font-bold text-center mb-10">Pick your sound</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Amapiano">Amapiano</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Private-school piano">Private-school piano</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Bacardi">Bacardi-inspired</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Deep house">Deep house</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Afro-house">Afro-house</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Gqom">Gqom 3-step</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Kwaito">Kwaito</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Maskandi">Maskandi</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Mbaqanga">Mbaqanga</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Isicathamiya">Isicathamiya</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Gospel">Gospel</div>
-        <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 transition" data-genre="Afrobeats">Afrobeats</div>
-      </div>
-      <p class="text-center text-zinc-500 text-sm mt-6">…and 9 more, from Kwaito to Gospel.</p>
-    </section>
-  </div>
-
-  <!-- CREATE -->
-  <div id="page-create" class="page hidden">
-    <div class="max-w-3xl mx-auto px-4 py-12">
-      <h2 class="font-display text-4xl font-bold mb-2">Create a track</h2>
-      <p class="text-zinc-400 mb-8">Describe the vibe. We’ll generate an original Mzansi sound.</p>
-
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 space-y-5">
-        <div>
-          <label class="block text-sm font-medium mb-2">Genre</label>
-          <select id="genre-select" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500">
-            <option>Amapiano</option>
-            <option>Private-school piano</option>
-            <option>Bacardi-inspired piano</option>
-            <option>Deep house</option>
-            <option>Afro-house</option>
-            <option>Gqom 3-step</option>
-            <option>Kwaito</option>
-            <option>Maskandi</option>
-            <option>Mbaqanga</option>
-            <option>Isicathamiya</option>
-            <option>Gospel</option>
-            <option>Afrobeats</option>
-          </select>
+      <section class="max-w-6xl mx-auto px-4 grid sm:grid-cols-3 gap-4 pb-10">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 card-hover">
+          <div class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-clock text-amber-400"></i>
+          </div>
+          <h3 class="font-semibold mb-1">Full songs, your length</h3>
+          <p class="text-zinc-400 text-sm">30-second previews up to full 4–6 minute tracks.</p>
         </div>
-        <div>
-          <label class="block text-sm font-medium mb-2">Describe your track</label>
-          <textarea id="prompt" rows="4" placeholder="e.g. Late night Joburg drive, deep log drum, jazzy piano, soft male vocals, 110 BPM..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 focus:outline-none focus:border-amber-500"></textarea>
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 card-hover">
+          <div class="w-10 h-10 rounded-xl bg-lime-500/10 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-copyright text-lime-400"></i>
+          </div>
+          <h3 class="font-semibold mb-1">Your music, your rights</h3>
+          <p class="text-zinc-400 text-sm">Download and use commercially. No strings attached.</p>
         </div>
-        <div class="grid grid-cols-2 gap-4">
+        <div class="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-5 card-hover">
+          <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center mb-3">
+            <i class="fa-solid fa-mobile-screen text-emerald-400"></i>
+          </div>
+          <h3 class="font-semibold mb-1">Built for SA phones</h3>
+          <p class="text-zinc-400 text-sm">Data-light Beat Maker that works fully offline.</p>
+        </div>
+      </section>
+
+      <section class="max-w-6xl mx-auto px-4 pb-12">
+        <h2 class="font-display text-2xl font-bold text-center mb-6">Pick your sound</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Amapiano" data-bpm="112">
+            <div class="text-sm font-medium">Amapiano</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Log drum · 108–118</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Private-school piano" data-bpm="110">
+            <div class="text-sm font-medium">Private-school</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Jazzy piano</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Bacardi" data-bpm="115">
+            <div class="text-sm font-medium">Bacardi</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Energetic piano</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Gqom" data-bpm="128">
+            <div class="text-sm font-medium">Gqom 3-step</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Hard · 120–130</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Kwaito" data-bpm="105">
+            <div class="text-sm font-medium">Kwaito</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Township classic</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Maskandi" data-bpm="100">
+            <div class="text-sm font-medium">Maskandi</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Guitar stories</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Gospel" data-bpm="90">
+            <div class="text-sm font-medium">Gospel</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Soulful & uplifting</div>
+          </div>
+          <div class="genre-card bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-amber-500 active:scale-[0.97] transition" data-genre="Afro-house" data-bpm="120">
+            <div class="text-sm font-medium">Afro-house</div>
+            <div class="text-xs text-zinc-500 mt-0.5">Deep grooves</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- CREATE -->
+    <div id="page-create" class="page hidden">
+      <div class="max-w-2xl mx-auto px-4 py-8">
+        <h2 class="font-display text-3xl font-bold mb-1">Create a track</h2>
+        <p class="text-zinc-400 text-sm mb-6">Describe the vibe. We’ll shape an original Mzansi sound.</p>
+
+        <div class="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-5 space-y-4">
           <div>
-            <label class="block text-sm font-medium mb-2">Length</label>
-            <select id="length" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3">
-              <option>30 seconds</option>
-              <option>1 minute</option>
-              <option>2 minutes</option>
-              <option>4–6 minutes</option>
+            <label class="block text-xs font-medium text-zinc-400 mb-1.5">Genre</label>
+            <select id="genre-select" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500">
+              <option>Amapiano</option>
+              <option>Private-school piano</option>
+              <option>Bacardi</option>
+              <option>Gqom</option>
+              <option>Kwaito</option>
+              <option>Maskandi</option>
+              <option>Gospel</option>
+              <option>Afro-house</option>
+              <option>Deep house</option>
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium mb-2">BPM</label>
-            <input type="number" id="bpm" value="112" min="80" max="160" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3">
+            <label class="block text-xs font-medium text-zinc-400 mb-1.5">Describe your track</label>
+            <textarea id="prompt" rows="3" placeholder="Late night Joburg drive, deep log drum, jazzy piano, soft vocals, warm pads..." class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-amber-500 resize-none"></textarea>
           </div>
-        </div>
-        <button onclick="generateTrack()" id="generate-btn" class="w-full py-4 rounded-xl bg-gradient-to-r from-amber-500 to-lime-500 text-black font-semibold text-lg hover:opacity-90 transition flex items-center justify-center gap-2">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Generate track
-        </button>
-      </div>
-
-      <div id="generation-result" class="mt-8 hidden">
-        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-          <div class="flex items-center justify-between mb-4">
+          <div class="grid grid-cols-2 gap-3">
             <div>
-              <h3 id="result-title" class="font-semibold text-xl"></h3>
-              <p id="result-meta" class="text-sm text-zinc-400"></p>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">Length</label>
+              <select id="length" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-sm">
+                <option>30 seconds</option>
+                <option>1 minute</option>
+                <option selected>2 minutes</option>
+                <option>4–6 minutes</option>
+              </select>
             </div>
-            <div class="flex gap-2">
-              <button onclick="playGenerated()" class="px-4 py-2 rounded-lg bg-amber-500 text-black font-medium"><i class="fa-solid fa-play"></i></button>
-              <button onclick="saveSong()" class="px-4 py-2 rounded-lg border border-zinc-700"><i class="fa-solid fa-download"></i></button>
-            </div>
-          </div>
-          <div class="flex items-end gap-1 h-16" id="visualizer">
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.1s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.2s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.3s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.4s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.5s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.6s"></div>
-            <div class="w-1 bg-amber-500 wave" style="animation-delay: 0.7s"></div>
-          </div>
-          <audio id="generated-audio" class="hidden"></audio>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BEAT MAKER -->
-  <div id="page-beatmaker" class="page hidden">
-    <div class="max-w-4xl mx-auto px-4 py-12">
-      <h2 class="font-display text-4xl font-bold mb-2">Beat Maker</h2>
-      <p class="text-zinc-400 mb-8">Data-light, works offline. Tap the pads. Build your Amapiano or Gqom loop.</p>
-
-      <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
-        <div class="flex items-center justify-between mb-6">
-          <div class="flex items-center gap-4">
-            <button onclick="togglePlay()" id="play-btn" class="w-14 h-14 rounded-full bg-gradient-to-r from-amber-500 to-lime-500 text-black text-2xl flex items-center justify-center">
-              <i class="fa-solid fa-play"></i>
-            </button>
             <div>
-              <div class="text-sm text-zinc-400">BPM</div>
-              <input type="range" id="bpm-slider" min="90" max="140" value="112" class="w-32" oninput="updateBPM(this.value)">
-              <span id="bpm-display" class="ml-2 font-mono">112</span>
+              <label class="block text-xs font-medium text-zinc-400 mb-1.5">BPM</label>
+              <input type="number" id="bpm" value="112" min="70" max="150" class="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-3 text-sm">
             </div>
           </div>
-          <div class="text-right">
-            <div class="text-xs text-zinc-500">Step</div>
-            <div id="step-indicator" class="font-mono text-2xl">1</div>
+          <button onclick="generateTrack()" id="generate-btn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-lime-500 text-black font-semibold flex items-center justify-center gap-2 active:scale-[0.98] transition">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Generate track
+          </button>
+          <p class="text-center text-xs text-zinc-500">Uses 1 credit · Demo audio for playback</p>
+        </div>
+
+        <div id="generation-result" class="mt-6 hidden">
+          <div class="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-5">
+            <div class="flex items-start justify-between gap-3 mb-4">
+              <div class="min-w-0">
+                <h3 id="result-title" class="font-semibold truncate"></h3>
+                <p id="result-meta" class="text-xs text-zinc-400 mt-0.5"></p>
+              </div>
+              <div class="flex gap-2 shrink-0">
+                <button onclick="playGenerated()" class="w-10 h-10 rounded-full bg-amber-500 text-black flex items-center justify-center"><i class="fa-solid fa-play text-sm"></i></button>
+                <button onclick="saveSong()" class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center"><i class="fa-solid fa-bookmark text-sm"></i></button>
+              </div>
+            </div>
+            <div class="flex items-end justify-center gap-1 h-12 mb-2" id="visualizer">
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.1s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.2s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.3s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.4s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.5s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.6s"></div>
+              <div class="w-1 h-full bg-amber-500/80 rounded-full wave origin-bottom" style="animation-delay:0.7s"></div>
+            </div>
+            <audio id="generated-audio" class="hidden"></audio>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEAT MAKER -->
+    <div id="page-beatmaker" class="page hidden">
+      <div class="max-w-2xl mx-auto px-4 py-8">
+        <div class="flex items-center justify-between mb-5">
+          <div>
+            <h2 class="font-display text-3xl font-bold">Beat Maker</h2>
+            <p class="text-zinc-400 text-sm">Works offline · Tap pads to build loops</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-8 gap-2 mb-6" id="sequencer">
-          <!-- Pads generated by JS -->
-        </div>
+        <div class="bg-zinc-900/70 border border-zinc-800 rounded-2xl p-4 sm:p-5">
+          <div class="flex items-center justify-between mb-5">
+            <div class="flex items-center gap-3">
+              <button onclick="togglePlay()" id="play-btn" class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-lime-500 text-black text-xl flex items-center justify-center shadow-lg shadow-amber-500/20 active:scale-95 transition">
+                <i class="fa-solid fa-play"></i>
+              </button>
+              <div>
+                <div class="text-xs text-zinc-400">BPM</div>
+                <div class="flex items-center gap-2">
+                  <input type="range" id="bpm-slider" min="90" max="140" value="112" class="w-24 accent-amber-500" oninput="updateBPM(this.value)">
+                  <span id="bpm-display" class="font-mono text-sm w-8">112</span>
+                </div>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-xs text-zinc-500">Step</div>
+              <div id="step-indicator" class="font-mono text-2xl font-bold text-amber-400">1</div>
+            </div>
+          </div>
 
-        <div class="grid grid-cols-4 gap-3">
-          <button onclick="playSound('kick')" class="beat-pad py-6 rounded-xl bg-zinc-800 hover:bg-zinc-700 font-medium">Kick</button>
-          <button onclick="playSound('log')" class="beat-pad py-6 rounded-xl bg-zinc-800 hover:bg-zinc-700 font-medium">Log Drum</button>
-          <button onclick="playSound('piano')" class="beat-pad py-6 rounded-xl bg-zinc-800 hover:bg-zinc-700 font-medium">Piano</button>
-          <button onclick="playSound('shaker')" class="beat-pad py-6 rounded-xl bg-zinc-800 hover:bg-zinc-700 font-medium">Shaker</button>
+          <!-- Presets -->
+          <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+            <button onclick="loadPreset('amapiano')" class="px-3 py-1.5 rounded-full text-xs border border-zinc-700 whitespace-nowrap hover:border-amber-500">Amapiano</button>
+            <button onclick="loadPreset('gqom')" class="px-3 py-1.5 rounded-full text-xs border border-zinc-700 whitespace-nowrap hover:border-amber-500">Gqom</button>
+            <button onclick="loadPreset('clear')" class="px-3 py-1.5 rounded-full text-xs border border-zinc-700 whitespace-nowrap hover:border-zinc-500">Clear</button>
+          </div>
+
+          <!-- Sequencer grid -->
+          <div class="space-y-1.5 mb-5" id="sequencer"></div>
+
+          <!-- Sound pads -->
+          <div class="grid grid-cols-4 gap-2">
+            <button onclick="playSound('kick')" class="beat-pad py-5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Kick</button>
+            <button onclick="playSound('log')" class="beat-pad py-5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Log Drum</button>
+            <button onclick="playSound('piano')" class="beat-pad py-5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Piano</button>
+            <button onclick="playSound('shaker')" class="beat-pad py-5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm font-medium">Shaker</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MY SONGS -->
-  <div id="page-songs" class="page hidden">
-    <div class="max-w-3xl mx-auto px-4 py-12">
-      <h2 class="font-display text-4xl font-bold mb-8">My Songs</h2>
-      <div id="songs-list" class="space-y-3">
-        <p class="text-zinc-500 text-center py-12">No songs yet. Create your first track.</p>
+    <!-- MY SONGS -->
+    <div id="page-songs" class="page hidden">
+      <div class="max-w-2xl mx-auto px-4 py-8">
+        <h2 class="font-display text-3xl font-bold mb-6">My Songs</h2>
+        <div id="songs-list" class="space-y-2.5"></div>
       </div>
     </div>
-  </div>
+  </main>
 
-  <footer class="border-t border-zinc-800 py-8 text-center text-zinc-500 text-sm">
-    Mzansi Music AI · Made for South African creators · Your music, your rights
-  </footer>
+  <!-- Bottom nav -->
+  <nav class="bottom-nav fixed bottom-0 left-0 right-0 bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-800 z-50">
+    <div class="max-w-lg mx-auto flex">
+      <button onclick="showPage('home')" class="flex-1 py-3 flex flex-col items-center gap-0.5 text-xs text-zinc-400 hover:text-amber-400 transition" id="nav-home">
+        <i class="fa-solid fa-house text-base"></i> Home
+      </button>
+      <button onclick="showPage('create')" class="flex-1 py-3 flex flex-col items-center gap-0.5 text-xs text-zinc-400 hover:text-amber-400 transition" id="nav-create">
+        <i class="fa-solid fa-wand-magic-sparkles text-base"></i> Create
+      </button>
+      <button onclick="showPage('beatmaker')" class="flex-1 py-3 flex flex-col items-center gap-0.5 text-xs text-zinc-400 hover:text-amber-400 transition" id="nav-beatmaker">
+        <i class="fa-solid fa-drum text-base"></i> Beat Maker
+      </button>
+      <button onclick="showPage('songs')" class="flex-1 py-3 flex flex-col items-center gap-0.5 text-xs text-zinc-400 hover:text-amber-400 transition" id="nav-songs">
+        <i class="fa-solid fa-list text-base"></i> Songs
+      </button>
+    </div>
+  </nav>
 
   <script>
-    // Sample audio URLs (public domain / free for demo)
     const sampleTracks = {
       "Amapiano": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-      "Gqom": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-      "Gospel": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
-      "default": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3"
+      "Private-school piano": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      "Bacardi": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      "Gqom": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      "Kwaito": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+      "Maskandi": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+      "Gospel": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+      "Afro-house": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+      "Deep house": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
+      "default": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
     };
 
     let currentSong = null;
-    let songs = JSON.parse(localStorage.getItem('mzansi-songs') || '[]');
+    let songs = JSON.parse(localStorage.getItem('mzansi-songs-v2') || '[]');
+    let credits = parseInt(localStorage.getItem('mzansi-credits') || '5');
     let isPlaying = false;
     let currentStep = 0;
     let sequencerInterval = null;
     let bpm = 112;
 
-    // Web Audio for Beat Maker
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+    function updateCreditsDisplay() {
+      document.getElementById('credits').textContent = credits + ' credit' + (credits !== 1 ? 's' : '');
+    }
+
     function playSound(type) {
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
+      if (audioCtx.state === 'suspended') audioCtx.resume();
       const now = audioCtx.currentTime;
 
       if (type === 'kick') {
-        osc.frequency.setValueAtTime(150, now);
-        osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.5);
-        gain.gain.setValueAtTime(1, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-        osc.start(now);
-        osc.stop(now + 0.5);
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(160, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
+        gain.gain.setValueAtTime(1.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+        osc.start(now); osc.stop(now + 0.5);
       } else if (type === 'log') {
+        // Deep log drum-ish
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.type = 'triangle';
-        osc.frequency.setValueAtTime(80, now);
-        osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
-        gain.gain.setValueAtTime(0.8, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-        osc.start(now);
-        osc.stop(now + 0.4);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.frequency.setValueAtTime(70, now);
+        osc.frequency.exponentialRampToValueAtTime(35, now + 0.35);
+        gain.gain.setValueAtTime(1, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+        osc.start(now); osc.stop(now + 0.6);
       } else if (type === 'piano') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(440, now);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.8);
-        osc.start(now);
-        osc.stop(now + 0.8);
+        // Simple chord stab
+        [261.63, 329.63, 392].forEach((freq, i) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.value = freq;
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+          osc.start(now); osc.stop(now + 0.75);
+        });
       } else if (type === 'shaker') {
-        // Noise-like
-        const bufferSize = 2 * audioCtx.sampleRate;
-        const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) output[i] = Math.random() * 2 - 1;
+        const bufferSize = audioCtx.sampleRate * 0.08;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / bufferSize);
         const noise = audioCtx.createBufferSource();
-        noise.buffer = noiseBuffer;
+        noise.buffer = buffer;
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'highpass';
-        filter.frequency.value = 1000;
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.gain.setValueAtTime(0.15, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-        noise.start(now);
-        noise.stop(now + 0.1);
+        filter.frequency.value = 4000;
+        const gain = audioCtx.createGain();
+        noise.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+        gain.gain.setValueAtTime(0.4, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+        noise.start(now); noise.stop(now + 0.1);
       }
     }
 
     function showPage(name) {
       document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
       document.getElementById('page-' + name).classList.remove('hidden');
+      document.querySelectorAll('[id^="nav-"]').forEach(n => n.classList.remove('text-amber-400'));
+      const nav = document.getElementById('nav-' + name);
+      if (nav) nav.classList.add('text-amber-400');
       if (name === 'songs') renderSongs();
       if (name === 'beatmaker') initSequencer();
     }
 
     function generateTrack() {
+      if (credits <= 0) {
+        alert('Out of credits. Refresh the page for more (demo).');
+        return;
+      }
       const btn = document.getElementById('generate-btn');
       const genre = document.getElementById('genre-select').value;
-      const prompt = document.getElementById('prompt').value || 'Original Mzansi track';
+      const prompt = document.getElementById('prompt').value.trim() || 'Original Mzansi track';
       const length = document.getElementById('length').value;
       const bpmVal = document.getElementById('bpm').value;
 
@@ -321,10 +391,14 @@
       btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating...';
 
       setTimeout(() => {
-        const title = prompt.slice(0, 40) + (prompt.length > 40 ? '...' : '');
+        credits--;
+        localStorage.setItem('mzansi-credits', credits);
+        updateCreditsDisplay();
+
+        const shortTitle = prompt.length > 36 ? prompt.slice(0, 36) + '…' : prompt;
         currentSong = {
           id: Date.now(),
-          title,
+          title: shortTitle,
           genre,
           prompt,
           length,
@@ -333,75 +407,120 @@
           audio: sampleTracks[genre] || sampleTracks.default
         };
 
-        document.getElementById('result-title').textContent = title;
+        document.getElementById('result-title').textContent = shortTitle;
         document.getElementById('result-meta').textContent = `${genre} · ${length} · ${bpmVal} BPM`;
         document.getElementById('generated-audio').src = currentSong.audio;
         document.getElementById('generation-result').classList.remove('hidden');
 
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Generate track';
-      }, 1800);
+      }, 1600);
     }
 
     function playGenerated() {
       const audio = document.getElementById('generated-audio');
-      if (audio.paused) audio.play();
-      else audio.pause();
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
     }
 
     function saveSong() {
       if (!currentSong) return;
       songs.unshift(currentSong);
-      localStorage.setItem('mzansi-songs', JSON.stringify(songs));
-      alert('Saved to My Songs!');
+      localStorage.setItem('mzansi-songs-v2', JSON.stringify(songs));
       showPage('songs');
     }
 
     function renderSongs() {
       const list = document.getElementById('songs-list');
       if (songs.length === 0) {
-        list.innerHTML = '<p class="text-zinc-500 text-center py-12">No songs yet. Create your first track.</p>';
+        list.innerHTML = '<p class="text-zinc-500 text-center py-16 text-sm">No songs yet.<br>Create your first track.</p>';
         return;
       }
       list.innerHTML = songs.map(s => `
-        <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4 flex items-center justify-between">
-          <div>
-            <div class="font-medium">${s.title}</div>
-            <div class="text-sm text-zinc-400">${s.genre} · ${s.length}</div>
+        <div class="bg-zinc-900/70 border border-zinc-800 rounded-xl p-4 flex items-center gap-3">
+          <button onclick="playSong('${s.audio}')" class="w-10 h-10 rounded-full bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center shrink-0">
+            <i class="fa-solid fa-play text-xs"></i>
+          </button>
+          <div class="min-w-0 flex-1">
+            <div class="font-medium text-sm truncate">${s.title}</div>
+            <div class="text-xs text-zinc-500">${s.genre} · ${s.length}</div>
           </div>
-          <div class="flex gap-2">
-            <button onclick="playSong('${s.audio}')" class="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-sm"><i class="fa-solid fa-play"></i></button>
-            <a href="${s.audio}" download class="px-3 py-1 rounded bg-zinc-800 hover:bg-zinc-700 text-sm"><i class="fa-solid fa-download"></i></a>
-          </div>
+          <a href="${s.audio}" download class="text-zinc-400 hover:text-white text-sm"><i class="fa-solid fa-download"></i></a>
         </div>
       `).join('');
     }
 
     function playSong(url) {
       const a = new Audio(url);
-      a.play();
+      a.play().catch(() => {});
     }
 
     // Sequencer
     const steps = 8;
-    const tracks = ['kick', 'log', 'piano', 'shaker'];
+    const tracks = [
+      { id: 'kick', label: 'Kick' },
+      { id: 'log', label: 'Log' },
+      { id: 'piano', label: 'Piano' },
+      { id: 'shaker', label: 'Shaker' }
+    ];
     let pattern = tracks.map(() => Array(steps).fill(false));
 
     function initSequencer() {
       const container = document.getElementById('sequencer');
       container.innerHTML = '';
       tracks.forEach((track, ti) => {
+        const row = document.createElement('div');
+        row.className = 'flex items-center gap-2';
+        const label = document.createElement('div');
+        label.className = 'w-12 text-xs text-zinc-400 shrink-0';
+        label.textContent = track.label;
+        row.appendChild(label);
+        const grid = document.createElement('div');
+        grid.className = 'flex-1 grid grid-cols-8 gap-1';
         for (let s = 0; s < steps; s++) {
           const pad = document.createElement('div');
-          pad.className = 'h-12 rounded-lg bg-zinc-800 border border-zinc-700 cursor-pointer hover:border-amber-500';
+          pad.className = 'aspect-square rounded-md bg-zinc-800 border border-zinc-700 cursor-pointer active:scale-90 transition';
+          if (pattern[ti][s]) pad.classList.add('bg-amber-500', 'border-amber-500');
           pad.onclick = () => {
             pattern[ti][s] = !pattern[ti][s];
             pad.classList.toggle('bg-amber-500', pattern[ti][s]);
+            pad.classList.toggle('border-amber-500', pattern[ti][s]);
             pad.classList.toggle('bg-zinc-800', !pattern[ti][s]);
+            pad.classList.toggle('border-zinc-700', !pattern[ti][s]);
           };
-          container.appendChild(pad);
+          grid.appendChild(pad);
         }
+        row.appendChild(grid);
+        container.appendChild(row);
       });
+    }
+
+    function loadPreset(name) {
+      if (name === 'amapiano') {
+        pattern = [
+          [true, false, false, false, true, false, false, false], // kick
+          [false, false, true, false, false, false, true, false], // log
+          [false, true, false, true, false, true, false, true],   // piano
+          [true, false, true, false, true, false, true, false]    // shaker
+        ];
+        document.getElementById('bpm-slider').value = 112;
+        updateBPM(112);
+      } else if (name === 'gqom') {
+        pattern = [
+          [true, false, true, false, true, false, true, false],
+          [false, false, false, true, false, false, false, true],
+          [false, true, false, false, false, true, false, false],
+          [true, true, false, true, true, false, true, false]
+        ];
+        document.getElementById('bpm-slider').value = 128;
+        updateBPM(128);
+      } else {
+        pattern = tracks.map(() => Array(steps).fill(false));
+      }
+      initSequencer();
     }
 
     function updateBPM(val) {
@@ -426,25 +545,32 @@
     }
 
     function startSequencer() {
-      const interval = (60 / bpm) * 1000 / 2; // 8th notes
+      const interval = (60 / bpm) * 1000 / 2;
       sequencerInterval = setInterval(() => {
         tracks.forEach((track, ti) => {
-          if (pattern[ti][currentStep]) playSound(track);
+          if (pattern[ti][currentStep]) playSound(track.id);
         });
         document.getElementById('step-indicator').textContent = currentStep + 1;
+        // Highlight current step pads
+        const pads = document.querySelectorAll('#sequencer .aspect-square');
+        pads.forEach((p, idx) => {
+          const step = idx % steps;
+          p.classList.toggle('step-active', step === currentStep);
+        });
         currentStep = (currentStep + 1) % steps;
       }, interval);
     }
 
-    // Genre cards click
+    // Genre cards
     document.querySelectorAll('.genre-card').forEach(card => {
       card.addEventListener('click', () => {
         document.getElementById('genre-select').value = card.dataset.genre;
+        if (card.dataset.bpm) document.getElementById('bpm').value = card.dataset.bpm;
         showPage('create');
       });
     });
 
-    // Init
+    updateCreditsDisplay();
     showPage('home');
   </script>
 </body>
